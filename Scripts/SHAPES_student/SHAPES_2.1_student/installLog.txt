@@ -1,0 +1,9 @@
+Created folder C:/Users/Erk/Downloads/SHAPES_student/SHAPES_2.1_student/SHAPES
+Created folder C:/Users/Erk/Downloads/SHAPES_student/SHAPES_2.1_student/SHAPES/help
+Created module file C:/Users/Erk/Downloads/SHAPES_student/SHAPES_2.1_student/SHAPES.mod
+Created module in C:/Users/Erk/Documents/maya/2015-x64/modules/SHAPES
+Copied module file to C:/Users/Erk/Documents/maya/2015-x64/modules/
+Removed C:/Users/Erk/Downloads/SHAPES_student/SHAPES_2.1_student/SHAPES
+Removed C:/Users/Erk/Downloads/SHAPES_student/SHAPES_2.1_student/SHAPES.mod
+Removed C:/Users/Erk/Downloads/SHAPES_student/SHAPES_2.1_student/SHAPESRepository
+Removed C:/Users/Erk/Downloads/SHAPES_student/SHAPES_2.1_student/installSHAPES_2.1.ma

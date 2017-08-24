@@ -1,0 +1,17 @@
+global proc selInfJnt(string $to)
+{
+    string $toJnt = $to;
+    artSkinInflListChanging $toJnt 1;
+    artSkinInflListChanged artAttrSkinPaintCtx;
+    mayaHasRenderSetup;
+}
+
+global proc selectionSynchronize(string $outliner)
+{
+    string $selectedObjects[] = `nodeOutliner -q -cs $outliner`;
+    select -cl;
+    for ($object in $selectedObjects)
+    {
+        select -add $object;
+    }
+}

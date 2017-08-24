@@ -1,0 +1,67 @@
+
+if (`window -ex jntChnRes_win`)
+{
+    deleteUI -window jntChnRes_win;
+}
+
+window -t "Joint Chain Resolution" -wh 300 100 -s true jntChnRes_win;
+
+
+columnLayout -adj true myColumn;
+
+text -l "Instructions: Select bone to segment." -p myColumn;
+
+separator;
+
+textFieldButtonGrp -l "Number of Joints?" -bl "CREATE" -bc "jntChnRes_go" myTextFieldBtnGrp;
+
+showWindow jntChnRes_win;
+
+global proc jntChnRes_go()
+{
+    string $selSrcJnt[] = `ls -sl`;
+    
+    select -hi;
+    
+    string $findSelAmount[] = `ls -sl`;
+    
+    if (size($findSelAmount) < 2)
+    {
+        warning "Must select a bone.";
+    }
+    else
+    {
+        pickWalk -d down;
+        string $selChild[0] = `ls sl`;
+        
+        select $selChild[0];
+        
+        float $childJnt_tx = `getAttr ($selChild[0] + ".tx")`;
+        
+        float $srcJnt_rad = `getAttr ($selSrcJnt[0] + ".radius")`;
+        
+        pickWalk -d up;
+        
+        float $get_tfbg_val = `textFieldButtonGrp -q -text myTextFieldBtnGrp`;
+        
+        if ($get_tfbg_val < 2)
+        {
+            warning "Must create at least one segment.";
+        }
+        else
+        {
+            for ($i=1; $i<$get_tfbg_val; ++$i)
+            {
+                string $jnt = `joint -rad $srcJnt_rad -o 0 0 0`;
+                
+                move -r -ls (($childJnt_tx) / $get_tfbg_val) 0 0;
+            }
+            
+        string $lastJt[] = `ls -sl`;
+        
+        parent $selChild[0] $lastJt[0];
+        
+        select -cl;
+        }
+    }
+}

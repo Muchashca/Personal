@@ -1,0 +1,9 @@
+global proc selectionSynchronize(string $outliner)
+{
+    string $selectedObjects[] = `nodeOutliner -q -cs $outliner`;
+    select -cl;
+    for ($object in $selectedObjects)
+    {
+        select -add $object;
+    }
+}
