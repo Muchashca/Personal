@@ -109,7 +109,7 @@ class armOptionMenu:
     spineCount = None
     spineJnt = None
     spineMenuItems = None
-    defaultPos = [(4.328, 146.095, -3.051), (-7.772, 0, 0), (-26.792, 0, 0), (-22.493, 0, 0)]
+    defaultPos = [(4.328, 1.095, -0.721), (-7.772, 0, 0), (-26.792, 0, 0), (-22.493, 0, 0)]
     defaultRot = [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
     defaultOri = [(0, 0, 162.409), (0, 0, -30.983), (0, 0, 4.779), (0, 0, 0)]
     defaultList = {'pos':defaultPos, 'rot':defaultRot, 'ori':defaultOri}
@@ -135,6 +135,7 @@ class armOptionMenu:
             pm.warning('Arm not yet built')
     
     def buildArm(self, *args, **dataList):
+        #print self.uiMain.spineList
         check = pm.listRelatives(self.baseGrp, c = True)
         #if check != []:
         #    print 'none'
@@ -152,9 +153,6 @@ class armOptionMenu:
             dataList = self.defaultList
         grpName = '%s_Grp'%(self.name)
         self.baseGrp = pm.createNode('transform', n = grpName)
-        self.updateArmParent()
-        #grpPos = 
-        #pm.xform(self.baseGrp, t = (self.spineJnt
         pm.parent(self.baseGrp, self.templateGrp)
         pm.select(cl = True)
         if self.sideMenu.getValue() == 'Both':
@@ -176,7 +174,6 @@ class armOptionMenu:
                 joint = pm.joint(n = '%s_%s_B_Jnt_L'%(self.name, self.nameList[i]), r = True, o = dataList.get('ori')[i], p = dataList.get('pos')[i], ax = dataList.get('rot')[i][0], ay = dataList.get('rot')[i][1], az = dataList.get('rot')[i][2])
                 self.armJntListL.append(joint)
             pm.select(cl = True)
-        pm.select(cl = True)
         if self.sideMenu.getValue() == 'Right':
             self.armJntListL = []
             self.armJntListR = []
@@ -186,19 +183,24 @@ class armOptionMenu:
                 self.armJntListR.append(joint)
             pm.select(cl = True)
             changeSides(self.armJntListR)
-        if (self.sideMenu.getValue() == 'Left' or self.sideMenu.getValue() == 'Both'):
+        if self.sideMenu.getValue() == 'Both':
             pm.parent(self.armJntListL[0], self.baseGrp)
-        if (self.sideMenu.getValue() == 'Right' or self.sideMenu.getValue() == 'Both'):
             pm.parent(self.armJntListR[0], self.baseGrp)
+        if self.sideMenu.getValue() == 'Left':
+            pm.parent(self.armJntListL[0], self.baseGrp)
+        if self.sideMenu.getValue() == 'Right':
+            pm.parent(self.armJntListR[0], self.baseGrp)
+        self.connectToSpine()
+
         return self.baseGrp, self.baseJnt, self.armJntListL, self.armJntListR
 
-    def updateArmParent(self):
-        num = int(pm.optionMenu(self.spineMenu, q = True, v = True)) - 1
-        pm.delete(self.baseGrp, cn = True)
-        pm.parentConstraint(self.uiMain.spineRef.spineJnts[num], self.baseGrp, mo = False)
-
-
     #print main.armList['Arm01'].templateGrp
+
+    def connectToSpine(self, *args):
+        pm.delete(self.baseGrp, cn = True)
+        pm.pointConstraint(self.uiMain.spineRef.spineJnts[int(self.spineMenu.getValue()) - 1], self.baseGrp, mo = False)
+        pm.orientConstraint(self.uiMain.spineRef.spineJnts[int(self.spineMenu.getValue()) - 1], self.baseGrp, mo = True)
+        print self.uiMain.spineRef.spineJnts[int(self.spineMenu.getValue()) - 1]
 
     def btnSel(self, *args):
         pm.select(cl = True)
@@ -221,7 +223,7 @@ class armOptionMenu:
             pm.menuItem(l = 'Both')
             pm.menuItem(l = 'Left')
             pm.menuItem(l = 'Right')
-            self.spineMenu = pm.optionMenu(l = 'Spine', cc = self.spineNumber)
+            self.spineMenu = pm.optionMenu(l = 'Spine', cc = self.connectToSpine)
             self.setSpineCount(self.uiMain.spineCount)
             self.twistBox = pm.checkBox(l = 'Twist')
             self.delBtn = pm.button(l = 'Delete %s'%(self.name), p = self.column, c = partial(self.btnDel, self.layout, self.baseJnt))
@@ -319,7 +321,6 @@ class uiBase:
                                 
                 self.form.redistribute()
                 self.spineRef = spineOptionMenu(self.spineLayout, (0, 0, 0), 'template_Grp', self)
-                #self.spineList.append(self.spineRef)
                 pm.showWindow(self.win)
                 
     def updateArmSpineCount(self, num):
@@ -445,10 +446,6 @@ class uiBase:
             
 
 main = uiBase()
-
-
-#print main.armList['Arm01'].uiMain.spineRef.spineCount
-
 
 '''
 Get Scene objects
